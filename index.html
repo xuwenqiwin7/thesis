@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>广州线下漫展发展对策研究 | 文艺学复试展示</title>
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-wordcloud@4.4.1/build/index.umd.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Tailwind 配置 - 全局字号/行距放大+高对比度配色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF', // 高对比度深学术蓝，投屏更清晰
+                        secondary: '#3B82F6', // 辅助亮蓝
+                        accent: '#DBEAFE', // 浅蓝背景
+                        neutral: '#FFFFFF', // 纯白主背景，文字更清晰
+                        card: '#F1F5F9', // 浅灰卡片背景，提升文字对比度
+                        dark: '#0F172A', // 纯黑文字，最高对比度
+                        light: '#CBD5E1',
+                    },
+                    fontFamily: {
+                        sans: ['"PingFang SC"', '"SimSun"', 'system-ui', 'sans-serif'],
+                        title: ['"SimHei"', 'Arial', 'sans-serif']
+                    },
+                    fontSize: {
+                        // 导航栏保持原字号，其余全局放大
+                        body: '19px',
+                        title1: '34px',
+                        title2: '28px',
+                        title3: '24px',
+                        caption: '17px',
+                        nav: '14px',
+                    },
+                    lineHeight: {
+                        // 全局行距加大，阅读更轻松
+                        body: '2.0',
+                        title: '1.35'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            /* 3D翻转卡片样式 - 核心术语交互 */
+            .term-flip-card {
+                @apply relative w-full h-[180px] perspective-1000 cursor-pointer;
+            }
+            .term-card-inner {
+                @apply relative w-full h-full transition-transform duration-500 transform-style-3d;
+            }
+            .term-flip-card:hover .term-card-inner {
+                @apply rotate-y-180;
+            }
+            .term-card-front, .term-card-back {
+                @apply absolute w-full h-full backface-hidden rounded-xl shadow-md flex flex-col justify-center items-center p-4;
+            }
+            .term-card-front {
+                @apply bg-primary text-white z-10;
+            }
+            .term-card-back {
+                @apply bg-white border border-primary rotate-y-180;
+            }
+            /* 3D变换兼容 */
+            .perspective-1000 {
+                perspective: 1000px;
+            }
+            .transform-style-3d {
+                transform-style: preserve-3d;
+            }
+            .backface-hidden {
+                backface-visibility: hidden;
+            }
+            .rotate-y-180 {
+                transform: rotateY(180deg);
+            }
+            /* 手风琴面板样式 - 理论模块交互 */
+            .accordion-header {
+                @apply w-full flex justify-between items-center p-4 bg-primary text-white rounded-lg font-bold text-lg cursor-pointer transition-all hover:bg-primary/90;
+            }
+            .accordion-content {
+                @apply max-h-0 overflow-hidden transition-all duration-500 bg-card rounded-b-lg;
+            }
+            .accordion-content.active {
+                @apply max-h-[1000px] p-6 border-x border-b border-primary;
+            }
+            /* 通用组件 */
+            .academic-card {
+                @apply bg-card rounded-xl border border-light shadow-sm p-8 transition-all duration-300 hover:shadow-md;
+            }
+            .section-base {
+                @apply py-16 md:py-20 container mx-auto px-4 md:px-8;
+            }
+            .title-level1 {
+                @apply text-title1 font-bold font-title text-dark text-center mb-12;
+            }
+            .title-level2 {
+                @apply text-title2 font-bold font-title text-primary mb-8;
+            }
+            .title-level3 {
+                @apply text-title3 font-bold font-title text-dark mb-6;
+            }
+            .body-text {
+                @apply text-body text-dark leading-body mb-6;
+            }
+            .tab-active {
+                @apply bg-primary text-white border-primary;
+            }
+            .tab-inactive {
+                @apply bg-white text-dark border-light hover:border-primary hover:text-primary;
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral text-dark font-sans scroll-smooth">
+    <!-- 固定导航栏 - 字号保持不变，符合用户要求 -->
+    <header id="navbar" class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/98 backdrop-blur-sm border-b border-light">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex justify-between items-center h-14">
+                <a href="#hero" class="text-primary font-bold text-lg">漫展产业研究 | 文艺学复试展示</a>
+                <!-- 桌面端导航 - 字号保持nav规格不变 -->
+                <nav class="hidden md:flex space-x-5">
+                    <a href="#concept" class="text-dark hover:text-primary transition-colors text-nav">核心概念</a>
+                    <a href="#theory" class="text-dark hover:text-primary transition-colors text-nav">理论框架</a>
+                    <a href="#industry-distribution" class="text-dark hover:text-primary transition-colors text-nav">产业分布</a>
+                    <a href="#exhibition-classification" class="text-dark hover:text-primary transition-colors text-nav">漫展分类</a>
+                    <a href="#audience-analysis" class="text-dark hover:text-primary transition-colors text-nav">受众分析</a>
+                    <a href="#spiritual-culture" class="text-dark hover:text-primary transition-colors text-nav">文化价值</a>
+                    <a href="#field-research" class="text-dark hover:text-primary transition-colors text-nav">田野调查</a>
+                    <a href="#core-problems" class="text-dark hover:text-primary transition-colors text-nav">核心问题</a>
+                    <a href="#strategies" class="text-dark hover:text-primary transition-colors text-nav">发展对策</a>
+                </nav>
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-dark text-lg">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-light">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="#concept" class="text-dark hover:text-primary py-2 text-body">核心概念</a>
+                <a href="#theory" class="text-dark hover:text-primary py-2 text-body">理论框架</a>
+                <a href="#industry-distribution" class="text-dark hover:text-primary py-2 text-body">产业分布</a>
+                <a href="#exhibition-classification" class="text-dark hover:text-primary py-2 text-body">漫展分类</a>
+                <a href="#audience-analysis" class="text-dark hover:text-primary py-2 text-body">受众分析</a>
+                <a href="#spiritual-culture" class="text-dark hover:text-primary py-2 text-body">文化价值</a>
+                <a href="#field-research" class="text-dark hover:text-primary py-2 text-body">田野调查</a>
+                <a href="#core-problems" class="text-dark hover:text-primary py-2 text-body">核心问题</a>
+                <a href="#strategies" class="text-dark hover:text-primary py-2 text-body">发展对策</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区/封面 - 字号优化 -->
+    <section id="hero" class="min-h-[85vh] flex items-center justify-center bg-gradient-to-b from-accent to-white pt-14">
+        <div class="container mx-auto px-4 md:px-8 text-center">
+            <p class="text-primary font-medium mb-4 text-caption">仲恺农业工程学院 本科毕业论文</p>
+            <h1 class="text-title1 font-bold font-title text-dark mb-8 leading-title">
+                广州线下漫展发展对策研究
+            </h1>
+            <h2 class="text-xl md:text-2xl text-gray-600 mb-10 font-serif">Research on the Development Strategies of Offline Comic Exhibitions in Guangzhou</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10">
+                <div class="bg-white p-4 rounded-lg border border-light shadow-sm">
+                    <p class="text-gray-500 text-caption">作者</p>
+                    <p class="font-bold text-xl">徐文琪</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-light shadow-sm">
+                    <p class="text-gray-500 text-caption">专业</p>
+                    <p class="font-bold text-xl">文化产业管理212班</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-light shadow-sm">
+                    <p class="text-gray-500 text-caption">指导教师</p>
+                    <p class="font-bold text-xl">计红 副教授 / 陈译文</p>
+                </div>
+            </div>
+
+            <a href="#concept" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-medium text-lg transition-all hover:bg-primary/90 hover:shadow-md">
+                进入学术展示 <i class="fa fa-angle-down ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 第一部分：核心概念学术释义 -->
+    <section id="concept" class="section-base bg-white">
+        <h2 class="title-level1">一、核心概念学术释义</h2>
+        <div class="max-w-6xl mx-auto">
+            <!-- 研究核心定义 -->
+            <div class="academic-card mb-10">
+                <h3 class="title-level3 text-primary">1.1 研究核心内容与研究对象</h3>
+                <p class="body-text">
+                    <strong>本研究核心内容</strong>：采用访谈调研、数据提取与文本分析相结合的方法，以AI爬虫数据监测为依托，结合福柯、马尔库塞“知识权力”理论展开文化研究，深度剖析青年亚文化场域中受众的身份认同与情感转向。聚焦漫展运营符号消费、艺术生产活动、视觉文化与审美主体性、受众心理文化记忆等核心议题展开学理探究。
+                </p>
+                <p class="body-text">
+                    <strong>本研究核心对象</strong>：以广州市12-35岁泛二次元用户为受众主体，以广州动漫星城、地王广场、时尚天河三大热门二次元消费场景为静态调研对象，以广州CICF中国国际漫画节、萤火虫动漫嘉年华、CPSP同人展三大核心展会为动态研究样本，结合线上新媒体平台社群反馈数据分析，结合读者生产批评、游戏现实主义、网络文化、粉丝文化、消费文化理论等，对漫展活动监管、内容创作自生力不足、同人制品版权、运营守旧问题相关方面深入研究，从文化生态监管与舆情风险防控、文艺内容创新的自流体增长与“互联网＋”审美体验升级、区域链文化产业协同发展、互助长效发展与政策保障等维度，梳理行业现状并提出发展建议。
+                </p>
+            </div>
+
+            <!-- 核心术语 - 3D翻转交互卡片+分类筛选，解决文字太多问题 -->
+            <h3 class="title-level3 text-primary mb-8">1.2 核心术语学术规范释义</h3>
+            <!-- 术语分类筛选标签 -->
+            <div class="flex flex-wrap justify-center gap-3 mb-8" id="termTabs">
+                <button class="term-tab tab-active px-5 py-2 rounded-lg border font-bold text-lg transition-all" data-type="all">全部术语</button>
+                <button class="term-tab tab-inactive px-5 py-2 rounded-lg border font-bold text-lg transition-all" data-type="industry">核心业态类</button>
+                <button class="term-tab tab-inactive px-5 py-2 rounded-lg border font-bold text-lg transition-all" data-type="creation">创作文化类</button>
+                <button class="term-tab tab-inactive px-5 py-2 rounded-lg border font-bold text-lg transition-all" data-type="community">社群运营类</button>
+            </div>
+            <!-- 3D翻转卡片网格 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="termContainer">
+                <!-- 核心业态类 -->
+                <div class="term-flip-card" data-type="industry">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-map-marker text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">线下漫展</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                以动漫、游戏等二次元IP为核心，以线下集会为载体，集IP展示、同人交流、周边交易、COSPLAY展演于一体的文化会展形态，是二次元亚文化线下聚合、商业变现与文化传播的核心场景。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="industry">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-building text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">综合商业展</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                由市场化企业运营，以商业变现为核心，覆盖多IP、多品类的大型综合漫展，是广州漫展产业的核心商业形态，核心收入来自门票、展位费与商业赞助，市场化运营程度最高。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="industry">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-pencil text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">同人展</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                以同人创作者为核心，以同人作品交流、交易为核心内容的漫展形态，弱化商业属性，强调社群交流与创作表达，涵盖大型综合同人展、垂直ONLY展、小型同人聚会三大类，是漫展产业原创内容的核心孵化场景。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="industry">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-store text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">线下谷店</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                以销售IP官方周边、同人周边为核心的线下实体门店，是二次元消费的固定线下场景与漫展产业的线下延伸业态，同时承担着二次元社群线下聚合、同好交流的社交功能，核心聚集于广州越秀区核心商圈。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 创作文化类 -->
+                <div class="term-flip-card" data-type="creation">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-paint-brush text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">同人创作</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                分为原创同人与二次创作同人两类，核心指基于原有商业IP的角色、世界观进行的非商业性二次创作，以“热爱驱动、非盈利性、社群共享”为核心特征，是漫展文化的核心内核与原创内容孵化载体。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="creation">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-bookmark text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">ONLY展</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                隶属于同人展范畴，聚焦单一IP、单一题材、单一圈层的垂直类漫展，是近年广州增长最快的漫展形态，核心受众为该IP的深度粉丝，具有强社群属性、高用户精准度的特征，是同人文化垂直细分的典型业态。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="creation">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-user-circle text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">COSPLAY</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                简称COS，指爱好者借助服装、道具、妆造等手段，对动漫、游戏等IP中的角色进行还原演绎的文化行为，是漫展场景中核心的视觉表达形式与用户社交媒介，也是青年亚文化 群体审美实践、身份建构的重要方式。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="creation">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-shopping-bag text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">谷子经济</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                “谷子”源于日语“goods”的谐音，特指动漫、游戏IP的官方授权周边商品；谷子经济即围绕IP周边商品形成的“收藏-交易-社交”一体化消费经济形态，是二次元产业核心变现渠道与漫展商业收入的核心组成部分。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 社群运营类 -->
+                <div class="term-flip-card" data-type="community">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-users text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">泛二次元用户</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                对动漫、游戏、二次元相关内容有接触、消费行为的用户群体，涵盖核心创作者、深度爱好者与以周边为核心消费受众，本研究特指12-35岁的青少年与青年群体，是广州漫展产业的核心消费主体。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="community">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-ticket text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">漫展自由行</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                漫展主办方推出的免票入场政策，面向COSPLAY扮演者、兽装爱好者、三坑服饰爱好者、摄影爱好者等群体，需提前提交作品审核，通过后可免票入场，是漫展核心的内容引流与社群传播手段。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="community">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-microphone text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">虚拟主播/ASMR</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                虚拟主播是通过动作捕捉、虚拟形象打造的二次元主播群体，是漫展核心嘉宾类型之一；ASMR（自发性知觉经络反应）是虚拟主播核心内容形式之一，二者共同构成了漫展线上引流、线下互动的核心内容载体。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="term-flip-card" data-type="community">
+                    <div class="term-card-inner">
+                        <div class="term-card-front">
+                            <i class="fa fa-coffee text-3xl mb-3"></i>
+                            <h4 class="font-bold text-xl">同人衍生场景</h4>
+                            <p class="text-white/80 text-sm mt-2">鼠标悬停查看释义</p>
+                        </div>
+                        <div class="term-card-back">
+                            <p class="text-caption leading-body text-dark">
+                                同人文化的线下延伸场景，包括动漫主题观影会、IP主题生咖（主题咖啡厅）、同人创作交流会、谷子二手交换市集等小型线下活动，是同人文化日常化传播的核心载体，也是漫展场景的重要补充。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 研究动因与意义 -->
+            <div class="academic-card mb-10">
+                <h3 class="title-level3 text-primary">1.3 研究动因与核心意义</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">研究动因</h4>
+                        <ul class="space-y-3 text-caption leading-body">
+                            <li>• 产业现实需求：广州漫展产业规模持续扩张，展会数量快速增长，但监管乱象、内容同质化、版权争议、运营守旧等问题凸显，产业转型升级亟需系统性解决方案</li>
+                            <li>• 学术研究缺口：现有漫展相关研究多聚焦宏观产业经济维度，缺乏从受众审美心理理论视角的深度实证分析，针对广州本土漫展产业的系统性研究存在明显空白</li>
+                            <li>• 文化发展需要：二次元文化已成为当代青年亚文化的核心组成部分，漫展作为其核心线下场景，其发展直接关系到青少年审美培育、文化传播与城市文化建设</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">核心意义</h4>
+                        <ul class="space-y-3 text-caption leading-body">
+                            <li>• 理论意义：突破传统漫展研究单一的产业经济框架，引入美学核心理论、社会批判理论，从受众审美心理维度构建全新分析范式，丰富了青年亚文化、文艺美学与文化产业研究的学术体系</li>
+                            <li>• 实践意义：基于一手田野调研与用户行为数据分析，精准定位广州漫展产业核心痛点，提出可落地的全维度发展对策，为漫展主办方、行业监管部门、产业从业者提供可直接参考的运营与治理方案</li>
+                            <li>• 文化价值：深入挖掘漫展产业的审美价值与文化传播价值，为二次元亚文化的正向发展、青年审美素养培育、城市文化软实力提升提供理论参考，推动漫展产业的有序发展</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增：论文关键词词云 -->
+            <div class="academic-card">
+                <h3 class="title-level3 text-primary text-center mb-6">论文核心关键词词云</h3>
+                <div class="w-full max-w-4xl mx-auto h-[500px] text-sm">
+                    <canvas id="wordCloudChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第二部分：研究核心理论阐释 - 手风琴交互+论文应用场景 -->
+    <section id="theory" class="section-base bg-card">
+        <h2 class="title-level1">二、研究核心理论阐释</h2>
+        <div class="max-w-6xl mx-auto">
+            <p class="body-text text-center mb-10">点击下方理论标题，展开查看理论核心与本论文中的应用场景</p>
+            <!-- 文艺学美学理论 - 手风琴面板 -->
+            <h3 class="title-level2 text-center mb-6">文艺学与美学核心理论</h3>
+            <div class="space-y-4 mb-12">
+                <!-- 康德审美无功利性理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="kant">
+                        <span>康德审美无功利性理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="kant">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    康德在《判断力批判》中提出，审美判断的核心特质是“无功利性”，即审美活动超越了对对象的实存欲求，只关注对象的形式所带来的愉悦感。审美愉悦区别于感官的快适与道德的善，它不依赖于对象的实际用途，也不受到利害关系的束缚，是一种自由的、纯粹的精神愉悦。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究以该理论为核心基础，剖析了同人创作的核心驱动力：同人创作者的核心诉求并非商业盈利，而是对IP的热爱与审美表达欲，正是审美无功利性的典型体现。同时，该理论也解释了漫展受众的核心行为逻辑：受众参与漫展的核心诉求并非购买商品，而是通过欣赏同人作品、观看cosplay演绎、沉浸IP主题场景，获得纯粹的审美愉悦，超越了单纯的消费行为，实现了精神层面的审美满足。这一理论也为批判部分漫展过度商业化、挤压审美空间的问题提供了核心理论依据。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 接受美学理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="yaosi">
+                        <span>接受美学理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="yaosi">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    以姚斯、伊瑟尔为代表的接受美学，将文学研究的重心从作者、文本转向了读者，提出了“期待视野”与“文本的召唤结构”两大核心概念。该理论认为，作品的意义并非固定不变，而是在读者的接受过程中生成的；文本本身存在着大量的空白与不确定性，形成了“召唤结构”，邀请读者参与到作品的意义建构之中；读者的“期待视野”（既有的审美经验、认知水平）决定了其对文本的理解与阐释。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究运用接受美学理论，重新定义了漫展受众的角色：受众并非被动的内容消费者，而是主动的意义建构者与审美再创造者。二次元IP的文本意义并非由官方完全限定，而是在受众的二次创作、cosplay演绎、线下互动中不断生成与丰富；IP文本中的世界观空白、角色情感留白，形成了强大的“召唤结构”，邀请受众通过同人创作、cosplay等形式参与到IP的意义建构之中。漫展正是为受众的这种“创造性接受”提供了核心线下空间，让受众的审美再创造从线上走向线下，从个体表达走向群体聚合。这一理论也为漫展产业的内容创新提供了核心方向：漫展主办方应充分尊重受众的创造性，为受众的审美再创造提供空间与支持。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 本雅明机械复制时代的艺术理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="benyaming">
+                        <span>本雅明机械复制时代的艺术理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="benyaming">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    本雅明在《机械复制时代的艺术作品》中提出，机械复制技术的出现，消解了传统艺术的“光晕”（Aura）——即艺术作品的独一无二性、原真性与仪式感。传统艺术的光晕源于其与宗教、仪式的绑定，而机械复制技术让艺术作品可以被大量复制、广泛传播，摆脱了对仪式的依附，获得了政治属性与大众属性，让艺术从少数精英的专属品，变成了大众可以接触、参与、改造的文化产品，实现了艺术的大众解放。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究运用该理论，剖析了cosplay、同人创作的文化本质与社会价值：cosplay、同人创作正是对原作的机械复制与审美再造，原作的“光晕”在二次创作中被消解，但同时也被赋予了新的大众性与创造性。原本只存在于屏幕、纸本中的IP形象，通过受众的cosplay演绎、同人创作，从精英化的商业创作，变成了大众可以参与、改造、演绎的文化产品，打破了创作者与受众的边界，实现了艺术的大众解放。漫展正是这种大众艺术实践的核心场域，它让原本只存在于虚拟世界的IP形象，变成了可触摸、可互动、可交流的现实存在，让每一个受众都可以成为艺术的创作者与演绎者。这一理论也为同人创作的合法性提供了理论支撑，论证了同人创作对IP传播、大众审美培育的正向价值。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 社会与文化研究理论 - 手风琴面板 -->
+            <h3 class="title-level2 text-center mb-6">社会与文化研究理论</h3>
+            <div class="space-y-4">
+                <!-- 福柯异托邦理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="foucault">
+                        <span>福柯异托邦、知识-权力理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="foucault">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    福柯提出的“异托邦”（Heterotopia）概念，指现实社会中真实存在的、区别于日常空间的“他者空间”。这类空间既具有现实的物理属性，又颠覆了日常空间的规则与秩序，是一种在现实社会中存在的、具有反叛性与替代性的空间。异托邦是社会的镜像，它既反映了现实社会的规则，又颠覆、重构了这些规则，为个体提供了一个可以逃离现实规训、实现自我表达的空间。福柯认为，知识与权力是不可分割的，形成一个“权力-知识”的复合体。他指出，权力的行使不仅创造了知识的对象，还使其显形并加以利用，反过来，知识也带来了权力。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究将漫展定义为当代青年群体的典型“异托邦”，以此为核心框架分析了漫展的精神价值与社会意义。在漫展的空间内，日常社会的审美规训、身份约束、社交规则被暂时悬置，青年群体可以自由地进行审美表达、身份建构与同好交流。这个空间既是现实的物理存在，又完全区别于日常社会的规则秩序，是青年群体在规训化的现代社会中，开辟出的一块审美与精神飞地。在这个异托邦空间中，青年群体可以暂时摆脱现实社会的身份标签、学业压力、职场规训，通过cosplay、同人创作等审美实践，探索自我的可能性，建构理想的自我身份，实现对现实规训的温和反抗。这一理论为理解漫展受众的行为逻辑、精神需求提供了核心分析框架，也为漫展产业的体验升级提供了核心方向：漫展主办方应守护好这个异托邦空间，为青年群体的自我表达、审美实践提供安全、包容的环境。同时，二次元圈层内的人际互动之间由其自拟的知识权力阶层设定，在内部文化环境中二次元衍生分为内圈层生态。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 马尔库塞爱欲解放理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="maerkusai">
+                        <span>马尔库塞爱欲解放理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="maerkusai">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    马尔库塞在《爱欲解放与文明》中提出，现代工业社会的工具理性、劳动异化与消费主义，压抑了人的爱欲与感性维度，将人变成了单向度的人——只追求物质消费，丧失了感性、批判性与创造性。马尔库塞认为，爱欲的解放并非单纯的性欲解放，而是人的整个感性维度的解放，是对人的本能、情感、创造力的全面释放。而审美与艺术，是实现爱欲解放、打破单向度化的核心途径，因为审美与艺术不受工具理性的束缚，能够唤醒人的感性维度与创造性。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究运用该理论，深入分析了漫展对青年群体的心理疗愈功能与精神价值。现代社会的生存压力、工具理性的规训，压抑了青年群体的感性表达与情感释放，让青年群体陷入了焦虑、孤独的单向度生存状态。而漫展通过二次元审美文化，为青年群体提供了感性解放的出口：在漫展的异托邦空间中，青年群体可以暂时摆脱工具理性的束缚，通过审美实践释放被压抑的感性与情感，实现爱欲的解放。二次元IP中的情感故事、人物形象，为青年群体提供了情感投射的对象，弥补了现实中的情感缺失；漫展中的同好交流、群体共鸣，消解了现代社会的原子化孤独，让青年群体重新获得了情感连接与群体归属。但也有不法分子利用动漫人物形象擦边“福利姬”进行灰色地带产业营业。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 伯明翰学派亚文化理论 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" data-accordion="bominghan">
+                        <span>伯明翰学派亚文化理论</span>
+                        <i class="fa fa-chevron-down transition-all duration-300"></i>
+                    </div>
+                    <div class="accordion-content" id="bominghan">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">理论核心</h4>
+                                <p class="text-caption leading-body">
+                                    以霍尔、赫伯迪格为代表的伯明翰学派，认为青年亚文化是从属阶级对主流文化的“符号反抗”。青年亚文化通过风格化的符号实践（服装、音乐、行为等），建构区别于主流文化的亚文化身份，实现对主流社会秩序、权力结构的抵抗与协商。亚文化的核心特征是边缘性、抵抗性与社群性，它既挑战了主流文化的规则，又通过商业收编、意识形态整合的方式，与主流文化形成动态的协商关系。
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xl mb-4 text-primary">本论文中的应用</h4>
+                                <p class="text-caption leading-body">
+                                    本研究运用该理论，分析了二次元亚文化的社会属性与漫展的核心功能。二次元文化作为当代最具影响力的青年亚文化，其核心实践正是通过cosplay、同人创作、漫展集会等符号化行为，完成对主流文化的抵抗与协商。cosplay的奇装异服、同人创作的非主流叙事，都是青年亚文化的风格化符号实践，是青年群体对主流审美规训、成人社会规则的温和抵抗。而漫展正是亚文化符号实践的核心场域，是青年亚文化从线上走向线下、从个体表达走向群体聚合的核心载体，是亚文化群体进行身份建构、群体认同的核心空间。同时，本研究也运用该理论，分析了漫展产业过度商业化带来的“商业收编”问题：当漫展完全被商业逻辑主导，丧失了亚文化的抵抗性与创造性，就会失去其核心生命力，这也是广州漫展产业面临的核心困境之一。这一理论为漫展产业的健康发展提供了核心警示：漫展产业的发展，必须平衡商业价值与亚文化的核心属性，守护好亚文化的创造性与抵抗性。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第三部分：广州线下动漫文化产业分布 -->
+    <section id="industry-distribution" class="section-base bg-white">
+        <h2 class="title-level1">三、广州线下动漫文化产业分布</h2>
+        <div class="max-w-6xl mx-auto">
+            <!-- 交互式区域切换模块 -->
+            <div class="academic-card mb-10">
+                <h3 class="title-level3 text-primary text-center mb-8">广州动漫文化产业核心区域分布</h3>
+                <!-- 区域切换按钮 -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8" id="districtTabs">
+                    <button class="district-tab tab-active px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-district="yuexiu">越秀区</button>
+                    <button class="district-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-district="tianhe">天河区</button>
+                    <button class="district-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-district="haizhu">海珠区</button>
+                    <button class="district-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-district="panyu">番禺区</button>
+                </div>
+                <!-- 区域内容展示区 -->
+                <div id="districtContent">
+                    <!-- 越秀区 默认显示 -->
+                    <div class="district-content active" id="yuexiu-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心定位</h4>
+                                <p class="body-text">广州二次元文化发源地，线下固定消费场景核心聚集区，广州线下谷店密度最高的区域，也是广州二次元社群日常交流的核心聚集地。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">产业特征</h4>
+                                <ul class="space-y-3 text-caption leading-body">
+                                    <li>• 固定二次元商铺高度聚集，形成完整的线下消费生态</li>
+                                    <li>• 常年举办小型同人市集、IP快闪活动，业态活跃度高</li>
+                                    <li>• 形成谷子销售、二手流通、妆造服务、道具制作的全链条业态</li>
+                                </ul>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心点位与业态</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">动漫星城</h5>
+                                        <p class="text-caption leading-body">广州规模最大的二次元主题商城，地铁1/2号线公园前站上盖，聚集了大量谷子店、同人工作室、妆造工作室，是广州二次元用户的核心线下聚集地，常年举办小型同人市集、IP快闪活动。</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">地王广场</h5>
+                                        <p class="text-caption leading-body">广州老牌二次元聚集地，主打谷子集市、二手谷子交易、LO裙/JK制服线下店，形成了“谷子交易-二手流通-社群交流”的完整业态，是广州谷圈核心的线下流通场景。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 天河区 -->
+                    <div class="district-content hidden" id="tianhe-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心定位</h4>
+                                <p class="body-text">广州二次元商业快闪、IP联名活动核心区，年轻消费群体聚集度最高的区域，也是广州泛二次元用户破圈传播的核心场景。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">产业特征</h4>
+                                <ul class="space-y-3 text-caption leading-body">
+                                    <li>• 头部商业体聚集，IP主题快闪活动频次高，覆盖泛用户能力强</li>
+                                    <li>• 中小型漫展、主题市集举办密集，业态形式灵活多样</li>
+                                    <li>• 主打沉浸式主题场景打造，是二次元文化破圈传播的核心阵地</li>
+                                </ul>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心点位与业态</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">时尚天河商业广场</h5>
+                                        <p class="text-caption leading-body">天河区核心二次元商圈，打造了广州首个二次元主题街区，聚集了数十家谷子店、手作工作室、COS妆造店，常年密集举办IP主题快闪、主题咖啡厅、同人市集等活动。</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">正佳广场/天河城</h5>
+                                        <p class="text-caption leading-body">广州顶级商业综合体，主打头部IP主题展、大型快闪活动、沉浸式主题街区，年均举办多场大型IP主题展，是泛二次元用户破圈传播的核心场景，吸引了大量边缘消费群体接触二次元文化。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 海珠区 -->
+                    <div class="district-content hidden" id="haizhu-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心定位</h4>
+                                <p class="body-text">广州大型头部漫展核心承载区，广州会展经济核心带，动漫游戏企业总部聚集地，也是广州漫展产业商业化运作的核心阵地。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">产业特征</h4>
+                                <ul class="space-y-3 text-caption leading-body">
+                                    <li>• 聚集了广州大量头部动漫游戏企业，是漫展产业的核心IP供给方</li>
+                                    <li>• 拥有超大型会展场馆，承载了广州几乎所有的万平级大型漫展</li>
+                                    <li>• 政府政策扶持力度大，是广州动漫游戏产业发展的核心政策承载区</li>
+                                </ul>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心点位与业态</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">琶洲会展经济带</h5>
+                                        <p class="text-caption leading-body">涵盖广交会展馆、保利世贸博览馆两大核心场馆，拥有大规模智能化展能，是广州CICF中国国际漫画节、萤火虫动漫嘉年华等头部漫展的固定举办地，是广州大型漫展的核心承载区。</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">广州游戏产业聚集区</h5>
+                                        <p class="text-caption leading-body">海珠区聚集了网易互娱、库洛游戏、深蓝互动等大量头部游戏企业，是广州游戏产业的核心聚集地，也是漫展产业的核心IP供给方，各大厂商均是广州商业漫展的核心合作方。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 番禺区 -->
+                    <div class="district-content hidden" id="panyu-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心定位</h4>
+                                <p class="body-text">广州动漫原创内容孵化基地，中小型同人展、ONLY展差异化承载地，高校二次元社群核心聚集区，也是广州漫展产业人才储备的核心阵地。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">产业特征</h4>
+                                <ul class="space-y-3 text-caption leading-body">
+                                    <li>• 聚集了大量动漫原创工作室，是广州本土原创IP的核心孵化地</li>
+                                    <li>• 覆盖广州大学城高校二次元社群，是青年创作者的核心聚集地</li>
+                                    <li>• 主打中小型垂直类漫展，与核心城区形成差异化发展格局</li>
+                                </ul>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心点位与业态</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">广州大学城</h5>
+                                        <p class="text-caption leading-body">覆盖多所高校，拥有广州规模最大的高校二次元社群，年均举办多场校园漫展、同人市集，是广州二次元用户的核心储备池，也是同人创作者的核心孵化地，为广州漫展产业提供了稳定的受众与内容供给。</p>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">南丰国际会展中心</h5>
+                                        <p class="text-caption leading-body">番禺区核心会展场馆，主打中小型同人展、ONLY展，走差异化发展路线，聚焦“中小型展+同人市集”的组合模式，打造了“集邮友好型”的场馆动线设计，是广州中小型垂直类漫展的核心承载地。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 广州本土游戏厂商漫展布局 -->
+            <div class="academic-card">
+                <h3 class="title-level3 text-primary">3.1 广州本土游戏厂商漫展布局</h3>
+                <p class="body-text">
+                    广州作为全国游戏产业重镇，本土游戏厂商是商业漫展的核心合作方，也是漫展内容供给的核心主体。不同厂商基于自身IP的受众定位，形成了差异化的漫展布局，成为广州漫展产业内容生态的核心组成部分。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                    <div class="bg-white p-6 rounded-xl border border-light shadow-sm">
+                        <h4 class="font-bold text-xl text-primary mb-4">库洛游戏</h4>
+                        <p class="text-caption leading-body">
+                            广州本土头部游戏厂商，旗下《战双帕弥什》《鸣潮》等作品主打硬核动作玩法，在广州萤火虫漫展、CICF漫展中，均会设置大规模主题展位，推出游戏试玩、限定周边售卖、官方coser舞台表演、玩家线下见面会等活动，其展位是漫展中核心的男性向内容引流点。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-light shadow-sm">
+                        <h4 class="font-bold text-xl text-primary mb-4">深蓝互动</h4>
+                        <p class="text-caption leading-body">
+                            广州本土新锐游戏厂商，腾讯子公司，旗下《重返未来：1999》以神秘学叙事、独特的美学风格、细腻的人物塑造为核心特色，在广州CICF漫展、萤火虫漫展中，会打造沉浸式剧情主题展位，还原游戏中的经典场景，推出限定周边、线下剧情互动、声优见面会等活动，精准契合女性受众的审美需求与情感需求。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-light shadow-sm">
+                        <h4 class="font-bold text-xl text-primary mb-4">网易游戏</h4>
+                        <p class="text-caption leading-body">
+                            广州游戏产业的龙头企业，旗下《阴阳师》《第五人格》《蛋仔派对》等头部IP覆盖全年龄段受众，在广州各大头部漫展中，均会设置超大规模的综合展位，针对不同IP打造差异化的互动场景，同时会联合漫展举办官方cosplay大赛、同人创作大赛等活动，不仅为漫展提供了核心内容，也通过漫展实现了IP的线下深度传播。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第四部分：广州漫展业态分类与受众特征 -->
+    <section id="exhibition-classification" class="section-base bg-card">
+        <h2 class="title-level1">四、广州漫展业态分类与受众特征</h2>
+        <div class="max-w-6xl mx-auto">
+            <!-- 交互式分类标签页 -->
+            <div class="academic-card mb-10">
+                <div class="flex flex-wrap justify-center gap-4 mb-8" id="classificationTabs">
+                    <button class="class-tab tab-active px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-class="government">综合政府展</button>
+                    <button class="class-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-class="commercial">商业综合展</button>
+                    <button class="class-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-class="doujin">同人展</button>
+                    <button class="class-tab tab-inactive px-6 py-3 rounded-lg border font-bold text-lg transition-all" data-class="derivative">同人衍生场景</button>
+                </div>
+
+                <!-- 分类内容区 -->
+                <div id="classificationContent">
+                    <!-- 综合政府展 默认 -->
+                    <div class="class-content active" id="government-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">业态定义</h4>
+                                <p class="body-text">由政府主导、国家级行业协会主办的大型综合漫展，是城市动漫产业的官方展示窗口，兼具文化传播、产业招商、行业交流多重功能。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">核心受众</h4>
+                                <p class="body-text">全年龄段泛二次元用户、行业从业者、媒体机构、政府相关单位，核心年龄层覆盖青少年与青年群体，无明显的圈层与性别倾向。</p>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">代表展会与核心特征</h4>
+                                <div class="bg-white p-6 rounded-lg border border-light shadow-sm mb-6">
+                                    <h5 class="font-bold text-lg mb-3">代表展会：CICF中国国际漫画节</h5>
+                                    <ul class="space-y-3 text-caption leading-body">
+                                        <li>• 国家重点支持的三大动漫会展之一，广州漫展产业的官方标杆，每年国庆期间固定举办</li>
+                                        <li>• 核心内容：中国动漫金龙奖评选、星舞银河全国宅舞大赛、COSPLAY全国超级大赛、头部IP企业展区</li>
+                                        <li>• 核心特征：政府背书、规格最高、IP资源最丰富、行业影响力最大，是华南地区规模最大的动漫展会，内容覆盖全年龄段，兼具官方性与大众性。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 商业综合展 -->
+                    <div class="class-content hidden" id="commercial-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">业态定义</h4>
+                                <p class="body-text">由市场化企业运营，以商业变现为核心，覆盖多IP、多品类的大型综合漫展，是广州漫展产业的核心商业形态，市场化运营程度最高。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">核心受众</h4>
+                                <p class="body-text">以初高中、大学生群体为主的泛二次元用户，核心需求分为IP内容体验、嘉宾互动、周边消费、社交集邮四大类，是广州漫展最核心的消费群体。</p>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">代表展会与核心特征</h4>
+                                <div class="bg-white p-6 rounded-lg border border-light shadow-sm mb-6">
+                                    <h5 class="font-bold text-lg mb-3">代表展会：萤火虫动漫嘉年华</h5>
+                                    <ul class="space-y-3 text-caption leading-body">
+                                        <li>• 广州本土头部商业漫展，每年举办多届，是广州举办频次最高的大型漫展，市场化运营成熟</li>
+                                        <li>• 核心内容：游戏企业展区、IP官方周边售卖、声优/虚拟主播/网红嘉宾签售、舞台表演、电竞比赛</li>
+                                        <li>• 核心特征：深度联动广州本土游戏厂商，针对不同受众设置差异化展区，兼顾商业变现与用户体验，用户粘性高，是华南地区最具影响力的商业漫展。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 同人展 -->
+                    <div class="class-content hidden" id="doujin-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">业态定义</h4>
+                                <p class="body-text">以同人创作者为核心，以同人作品交流、交易为核心内容的漫展形态，弱化商业属性，强调社群交流与创作表达，是漫展产业原创内容的核心孵化场景。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">核心受众</h4>
+                                <p class="body-text">以同人创作者、深度IP粉丝、画手/文手等内容生产者为主，对IP的情感浓度与忠诚度远高于其他类型漫展的受众，核心需求为创作交流、同好社交、同人作品收藏。</p>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">业态细分与核心特征</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">大型综合同人展</h5>
+                                        <p class="text-caption leading-body">代表为广州CPSP同人展，是华南地区规模最大的同人展，同人摊位占比极高，严格审核同人作品版权，弱化商业属性，社群属性极强，是广州同人创作者的核心展示与交流平台。</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">垂直ONLY展</h5>
+                                        <p class="text-caption leading-body">隶属于同人展范畴，聚焦单一IP、单一题材的垂直类漫展，是近年广州增长最快的漫展形态，用户精准度极高，社群属性极强，内容高度匹配垂直圈层用户的个性化需求。</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                    <h5 class="font-bold text-lg mb-3">小型同人聚会</h5>
+                                    <p class="text-caption leading-body">同人文化的轻量化线下场景，包括动漫主题观影会、IP主题生咖、同人创作交流会、谷子二手交换市集等，规模小、门槛低，是同人文化日常化传播的核心载体，也是漫展场景的重要补充，实现了同人文化从大型展会向日常社交的延伸。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 同人衍生场景 -->
+                    <div class="class-content hidden" id="derivative-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="col-span-1">
+                                <h4 class="font-bold text-xl text-primary mb-4">业态定义</h4>
+                                <p class="body-text">同人文化与漫展生态的线下延伸场景，是二次元文化日常化传播的核心载体，也是大型漫展之外，社群日常交流、内容传播的核心阵地，与漫展形成了“大型展会+日常场景”的互补生态。</p>
+                                <h4 class="font-bold text-xl text-primary mt-6 mb-4">核心受众</h4>
+                                <p class="body-text">IP深度粉丝、同人创作者、核心二次元用户，以青年群体为主，核心需求为同好日常社交、IP内容深度体验、同人创作交流，是漫展核心受众的日常化消费场景。</p>
+                            </div>
+                            <div class="col-span-2">
+                                <h4 class="font-bold text-xl text-primary mb-4">核心业态类型</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">IP主题生咖/主题咖啡厅</h5>
+                                        <p class="text-caption leading-body">以单一IP为主题的线下咖啡厅，通过场景还原、限定餐品、周边售卖等形式，为粉丝提供沉浸式的IP体验场景，是近年广州增长最快的同人衍生业态，核心集中在天河区、越秀区核心商圈。</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">动漫主题观影会</h5>
+                                        <p class="text-caption leading-body">以动漫剧场版、新番首播、经典作品重映为核心的线下观影活动，通常搭配同好交流、周边交换等环节，是同人社群日常聚合的核心形式，也是IP内容线下传播的重要载体。</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">谷子二手交换市集</h5>
+                                        <p class="text-caption leading-body">以谷子二手交易、交换为核心的小型线下市集，是谷圈核心的线下流通场景，通常在动漫星城、地王广场等核心商圈定期举办，形成了“新品发售-二手流通”的完整谷子经济闭环。</p>
+                                    </div>
+                                    <div class="bg-white p-5 rounded-lg border border-light shadow-sm">
+                                        <h5 class="font-bold text-lg mb-3">官方线下快闪</h5>
+                                        <p class="text-caption leading-body">由官方组织的短期线下活动，通常在核心商圈或漫展现场举办，通过限定商品、互动体验、明星见面会等形式，吸引粉丝参与，提升品牌影响力和用户粘性。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第五部分：漫展受众审美心理与媒介行为分析 -->
+    <section id="audience-analysis" class="section-base bg-white">
+        <h2 class="title-level1">五、漫展受众审美心理与媒介行为分析</h2>
+        <div class="max-w-6xl mx-auto">
+            <!-- 受众审美心理核心维度 -->
+            <div class="academic-card mb-10">
+                <h3 class="title-level3 text-primary">5.1 漫展受众审美心理核心维度</h3>
+                <p class="body-text">
+                    基于文艺学美学理论与田野调研，广州漫展受众的审美心理可分为四大核心维度，构成了受众参与漫展、进行二次元文化实践的底层心理逻辑，也是漫展产业发展的核心底层驱动力。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">无功利的审美愉悦追求</h4>
+                        <p class="body-text">
+                            基于康德的审美无功利性理论，漫展受众的核心审美心理，是对纯粹审美愉悦的追求。在日常社会中，青年群体的视觉体验与审美表达，往往被功利化的商业逻辑、规训化的社会审美所束缚；而在漫展的异托邦空间中，受众可以暂时悬置现实的功利需求，通过欣赏同人作品、观看cosplay演绎、沉浸IP主题场景，获得纯粹的审美愉悦。
+                        </p>
+                        <p class="body-text">
+                            这种审美愉悦超越了单纯的商品消费，受众的核心诉求并非“购买商品”，而是通过审美实践获得情感与精神的满足，这也是同人创作能够持续发展的核心心理基础。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">创造性的审美再实践</h4>
+                        <p class="body-text">
+                            基于接受美学理论，二次元IP的文本意义并非固定不变，而是在受众的创造性接受中不断生成。漫展正是受众进行审美再创造的核心场域：cosplay是受众通过身体实践，对IP角色进行的审美再创造；同人创作是受众通过文字、绘画等形式，对IP文本进行的审美再创造；甚至受众的逛展、集邮、社交行为，也是对IP审美体系的再实践。
+                        </p>
+                        <p class="body-text">
+                            在这一过程中，受众从被动的内容消费者，转变为主动的审美创造者，这种创造性的实践，是青年群体自我表达、自我实现的核心途径，也是漫展产业持续保持活力的核心源泉。
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">身份建构的审美表达</h4>
+                        <p class="body-text">
+                            基于福柯的自我技术理论，现代社会中的个体，往往被现实的身份标签所束缚，而漫展为青年群体提供了一个通过审美实践重构自我身份的空间。cosplay是最典型的身份建构审美实践：受众通过对角色的演绎，暂时摆脱了现实中的学生、职员等身份标签，在审美实践中建构了一个全新的、理想的自我身份，实现了对现实规训的反抗。
+                        </p>
+                        <p class="body-text">
+                            这种审美表达并非对现实的逃避，而是个体对自我可能性的探索与实践，青年群体在漫展的审美实践中，不断明确自己的审美偏好、价值取向，完成了自我认同的建构。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">群体认同的审美共鸣</h4>
+                        <p class="body-text">
+                            基于伯明翰学派亚文化理论，二次元亚文化是青年群体的符号反抗体系，而共同的审美体系，是亚文化群体形成群体认同的核心纽带。在漫展场景中，所有受众共享同一套二次元审美符号体系，无需过多的语言解释，就能通过cos造型、同人作品、IP周边等审美符号，获得同好的认同与共鸣，这种审美共鸣是群体归属感的核心来源。
+                        </p>
+                        <p class="body-text">
+                            这种群体认同的审美共鸣，在垂直ONLY展中体现得最为极致：同一IP的粉丝共享同一套审美体系与情感记忆，在漫展中形成了强烈的群体共鸣，消解了现代社会的原子化孤独，让青年群体找到了属于自己的社群归属。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 受众媒介行为分析 - 基于论文爬虫数据 -->
+            <div class="academic-card mb-10" id="spiritual-culture">
+                <h3 class="title-level3 text-primary">5.2 受众媒介行为与内容偏好分析</h3>
+                <p class="body-text">
+                    本研究通过网络爬虫技术，对B站、抖音两大平台的漫展相关内容、虚拟主播与ASMR相关内容进行了数据采集与分析，基于用户行为数据，对不同受众的内容偏好与媒介使用习惯进行了系统性分析。
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">虚拟主播与ASMR内容受众行为特征</h4>
+                        <p class="body-text">
+                            研究以B站平台为核心，以“虚拟主播、ASMR”为关键词进行数据爬取，抽取多组数据集进行分析发现：虚拟主播相关内容的受众，在内容偏好上呈现出明显的分野，核心可分为两大类型。
+                        </p>
+                        <p class="body-text">
+                            第一类内容以虚拟主播的游戏直播、硬核内容输出为核心，受众的媒介使用行为呈现出长时段、高粘性、强互动的特征，用户更关注主播的游戏操作、内容输出能力，互动行为集中在弹幕游戏讨论、技术交流等维度。
+                        </p>
+                        <p class="body-text">
+                            第二类内容以虚拟主播的ASMR、情感陪伴、剧场式演绎为核心，受众的媒介使用行为呈现出高频次、碎片化、强情感投射的特征，用户更关注主播的声音表现、情感共情能力，互动行为集中在情感表达、陪伴式互动等维度。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">漫展相关内容受众传播行为特征</h4>
+                        <p class="body-text">
+                            研究以抖音平台为核心，以“漫展、二次元”为关键词进行数据爬取，抽取多组数据集进行分析发现：漫展相关内容的传播力，与内容的视觉呈现、情感共鸣高度相关，不同类型内容的受众互动行为呈现出明显差异。
+                        </p>
+                        <p class="body-text">
+                            以游戏试玩、IP硬核内容解读为核心的漫展相关内容，受众的互动行为集中在评论区的内容讨论、细节补充，用户的收藏、转发行为更多基于内容的实用价值；以cosplay演绎、情感向内容为核心的漫展相关内容，受众的互动行为集中在点赞、分享，用户的转发行为更多基于内容的审美认同与情感共鸣。
+                        </p>
+                        <p class="body-text">
+                            数据同时显示，漫展相关内容的二次传播，高度依赖社群渠道，QQ群、微信群、朋友圈等私域渠道，是漫展相关内容传播的核心阵地，受众更愿意在同好社群中分享、讨论漫展相关内容。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 漫展产业的精神影响与文化传播价值 -->
+            <div class="academic-card">
+                <h3 class="title-level3 text-primary">5.3 漫展产业的精神影响与文化传播价值</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">漫展对个体的精神影响</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-bold text-lg">情感补偿与心理疗愈</h5>
+                                <p class="text-caption leading-body">
+                                    现代社会的生存压力、竞争焦虑与原子化的社交状态，让青年群体普遍面临着情感孤独与心理焦虑，而漫展作为异托邦空间，为青年群体提供了重要的情感补偿与心理疗愈功能。二次元IP中的人物故事、情感关系，为受众提供了情感投射的对象，弥补了现实中的情感缺失；而漫展中的同好交流、群体共鸣，让受众摆脱了现实中的孤独感，获得了情感的慰藉。
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-lg">自我认同与主体建构</h5>
+                                <p class="text-caption leading-body">
+                                    青年时期是个体自我认同建构的关键时期，而漫展中的审美实践，为青年群体的自我认同建构提供了重要的路径。通过cosplay、同人创作等审美实践，青年群体不断探索自我的可能性，明确自己的审美偏好、价值取向与身份认同，完成了主体的建构。对于很多青年受众而言，漫展不仅是一个娱乐场所，更是一个自我成长的空间，在创作与实践中，他们突破了自己的性格局限，获得了自信，完成了自我的成长。
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-lg">审美素养的培育与提升</h5>
+                                <p class="text-caption leading-body">
+                                    漫展是青年群体进行审美教育的重要场域，在漫展的审美实践中，青年群体的审美感知力、审美创造力与审美判断力得到了全面的培育与提升。通过欣赏优秀的同人作品、cosplay演绎、IP场景设计，青年群体接触到了多元的审美风格，提升了自己的审美感知力；通过同人创作、cos道具制作、妆造设计，青年群体在实践中锻炼了自己的审美创造力；通过对不同作品的评价、交流，青年群体形成了自己的审美判断标准，提升了审美判断力。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">漫展产业的文化传播价值</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <h5 class="font-bold text-lg">国产动漫IP的核心传播阵地</h5>
+                                <p class="text-caption leading-body">
+                                    漫展是国产动漫、游戏IP线下传播的核心场景，也是国产IP实现深度用户运营的核心载体。相较于线上传播，漫展通过沉浸式场景打造、线下互动体验、同好社群聚合，让IP内容从屏幕中走出来，成为可触摸、可互动、可体验的现实存在，实现了IP内容的深度传播，大幅提升了用户对国产IP的情感认同与忠诚度。广州各大漫展中，国产IP的展位占比逐年提升，大量国产动漫、游戏厂商通过漫展进行新作品宣发、用户见面会、同人创作大赛等活动，不仅实现了IP的传播，也培育了本土的创作生态。
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-lg">中外文化交流的重要桥梁</h5>
+                                <p class="text-caption leading-body">
+                                    漫展是中外动漫文化交流的重要桥梁，一方面，海外优秀的动漫文化通过漫展进入中国市场，让中国受众接触到多元的海外动漫文化，丰富了国内的动漫文化生态；另一方面，中国本土的动漫游戏IP也通过漫展走向海外，向海外受众展示中国动漫文化的魅力，实现了中国文化的对外传播。广州作为粤港澳大湾区的核心城市，其漫展产业不仅辐射全国，也对港澳地区、东南亚国家有着重要的影响力，广州各大漫展常年吸引大量港澳地区、东南亚的受众前来参与，成为大湾区文化交流、中外文化传播的重要窗口。
+                                </p>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-lg">城市文化名片的打造</h5>
+                                <p class="text-caption leading-body">
+                                    漫展产业已经成为广州城市文化建设的重要组成部分，CICF中国国际漫画节、萤火虫动漫嘉年华等头部展会，已经成为广州的城市文化名片，不仅吸引了全国大量的二次元用户前来广州，带动了城市文旅、消费的发展，也向全国展示了广州年轻、开放、包容的城市文化形象。广州将动漫游戏产业作为战略性新兴产业，通过政策扶持推动漫展产业的高质量发展，而漫展产业的发展，也反过来提升了广州的城市文化软实力，丰富了城市的文化内涵，打造了独具特色的城市文化品牌。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第六部分：田野调查与社群观察报告 -->
+    <section id="field-research" class="section-base bg-card">
+        <h2 class="title-level1">六、田野调查与社群观察报告</h2>
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 参与式访谈核心发现 -->
+                <div class="academic-card">
+                    <h3 class="title-level3 text-primary">6.1 参与式访谈核心发现</h3>
+                    <p class="body-text">
+                        本研究采用参与式观察法，以coser、参展观众的身份，多次参与广州CICF中国国际漫画节、萤火虫动漫嘉年华、CPSP广州同人展等核心漫展，全程参与妆造、场照拍摄、逛展、同人摊位交流等全流程，在过程中与同行同好、同人摊主、参展观众进行深度交流，总结出以下核心发现：
+                    </p>
+                    <ul class="space-y-4 text-caption leading-body mt-6">
+                        <li>• <strong>受众核心诉求层面</strong>：漫展受众的核心诉求可分为情感需求、社交需求、创作需求、消费需求四大类，其中情感需求与社交需求的优先级远高于消费需求。多数受访者表示，参与漫展的核心目的是“和同好见面”“获得情感共鸣”，而非“购买周边”，这一发现印证了审美无功利性理论在漫展场景中的适用性。
+                        </li>
+                        <li>• <strong>创作者群体层面</strong>：同人摊主参与漫展的核心驱动力是“热爱”与“交流”，而非盈利。多数受访者表示，同人摊位的收入仅能覆盖摊位费与制作成本，甚至经常出现亏损，持续参与漫展的核心原因是“想让更多人看到自己的作品”“和同好交流对角色的理解”。同时，创作者群体普遍面临版权边界模糊、盗印侵权的困扰，亟需明确的合规指引与政策保障。
+                        </li>
+                        <li>• <strong>用户体验层面</strong>：受众对漫展的负面评价，核心集中在安全保障不足、虚假宣传、商业化过度三大维度。女性受访者普遍对漫展的安防体系、反偷拍机制有更高的要求；游戏玩家群体更关注漫展的内容体验，对排队时间过长、商业广告过多的问题反馈集中；同人创作者群体则更关注摊位审核、版权保护相关的服务。
+                        </li>
+                    </ul>
+                </div>
+                <!-- 线上扩列群体观察报告 -->
+                <div class="academic-card">
+                    <h3 class="title-level3 text-primary">6.2 线上扩列群体观察报告</h3>
+                    <p class="body-text">
+                        本研究以广州漫展扩列的本地二次元爱好者为观察对象，持续观察其QQ空间、朋友圈的内容发布与传播行为，重点围绕漫展宣传方式、自由行免票群体的传播数据进行分析，总结出以下核心发现：
+                    </p>
+                    <ul class="space-y-4 text-caption leading-body mt-6">
+                        <li>• <strong>漫展宣传的社群传播逻辑</strong>：广州漫展的核心宣传渠道并非公域流量平台，而是二次元私域社群，包括QQ群、微信群、同好朋友圈、扩列空间等。漫展信息的传播高度依赖社群转发，社群传播是漫展门票销售、用户引流的核心渠道。
+                        </li>
+                        <li>• <strong>漫展自由行群体的传播数据特征</strong>：漫展自由行免票政策，是漫展主办方核心的社群传播手段。本研究对广州萤火虫漫展、CPSP同人展的自由行参与者的QQ空间传播数据进行统计发现，不同类型自由行参与者的内容传播力呈现出明显差异：COSPLAY自由行参与者的单条漫展相关内容，平均转发量与点赞量最高；其次是三坑服饰自由行、兽装自由行参与者；摄影自由行参与者的内容，收藏量与二次转发率更高。
+                        </li>
+                        <li>• <strong>自由行内容的传播规律</strong>：漫展举办前3-15天，是自由行内容发布的高峰期，参与者会集中发布cos预告、漫展搭子招募、摊位宣发等内容，这一阶段的内容转发量最高，是漫展信息传播的黄金期；漫展举办期间，内容以现场实况、集邮返图为主，点赞量最高，是社群互动的高峰期；漫展结束后1-2周，内容以精修场照、逛展vlog为主，收藏量最高，是漫展内容的长尾传播期。
+                        </li>
+                        <li>• <strong>社群口碑的传播效应</strong>：漫展的负面信息在社群中的传播速度远快于正面信息，一旦某场漫展出现虚假宣传、安防漏洞等问题，相关的“避雷”内容会在社群内快速扩散，直接影响用户的购票决策；而优质漫展的正面口碑，也会在社群内形成稳定的用户沉淀，头部漫展的核心用户群体，大多来自社群的长期口碑积累。
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第七部分：核心问题与对策建议 -->
+    <section id="core-problems" class="section-base bg-white">
+        <h2 class="title-level1">七、广州线下漫展发展核心问题诊断</h2>
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="academic-card">
+                    <div class="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-2xl mb-4">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">活动监管体系存在结构性漏洞</h3>
+                    <ul class="space-y-3 text-caption leading-body">
+                        <li>• 软色情、偷拍等灰色产业链滋生，违法成本极低，绝大多数案件止步于现场调解，难以形成有效威慑</li>
+                        <li>• 黄牛囤票、票务秩序混乱，虚假宣传问题频发，用户信任度持续受损</li>
+                        <li>• 周边偷盗行为频发，安防盲区多，未成年人保护机制不完善</li>
+                        <li>• 参展人员人身安全保障不足，骚扰行为隐蔽化，极端事件偶有发生，行业口碑受到严重影响</li>
+                    </ul>
+                </div>
+                <div class="academic-card">
+                    <div class="w-14 h-14 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center text-2xl mb-4">
+                        <i class="fa fa-clone"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">内容创作自生力严重不足</h3>
+                    <ul class="space-y-3 text-caption leading-body">
+                        <li>• 内容与体验严重同质化，小型漫展形成固定流水线模式，缺乏差异化内容与创新体验</li>
+                        <li>• 过度商业化挤压文化交流属性，展区广告与扫码活动泛滥，弱化了漫展的核心文化价值与审美价值</li>
+                        <li>• 工业化流水线体验侵蚀用户获得感，服务与票价不匹配问题突出，用户体验持续下滑</li>
+                        <li>• 本土原创IP孵化能力薄弱，过度依赖外部成熟IP，产业内生动力不足，难以形成长期竞争力</li>
+                    </ul>
+                </div>
+                <div class="academic-card">
+                    <div class="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-full flex items-center justify-center text-2xl mb-4">
+                        <i class="fa fa-copyright"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">同人制品版权治理陷入多维困境</h3>
+                    <ul class="space-y-3 text-caption leading-body">
+                        <li>• 版权治理存在结构性矛盾，摊位资质审核标准不统一，盗版与原创界限模糊，审核机制流于形式</li>
+                        <li>• 同人创作的盈利属性与知识产权保护存在核心冲突，合规边界不清晰，创作者面临较高的法律风险</li>
+                        <li>• 创作伦理与内容审查存在争议，成人向内容与未成年人保护存在矛盾，内容监管难度大</li>
+                        <li>• 交易秩序失范，盗版制品价格倒挂，严重破坏产业健康生态，挤压了正版与原创内容的生存空间</li>
+                    </ul>
+                </div>
+                <div class="academic-card">
+                    <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-2xl mb-4">
+                        <i class="fa fa-cog"></i>
+                    </div>
+                    <h3 class="font-bold text-xl mb-4">产业运营模式固化守旧</h3>
+                    <ul class="space-y-3 text-caption leading-body">
+                        <li>• 数据驱动能力不足，用户画像模糊，难以精准捕捉Z世代受众的核心审美需求与情感需求，活动设计与用户需求错配</li>
+                        <li>• 品牌IP化建设滞后，自有IP价值挖掘不充分，差异化竞争力不足，难以形成长期的品牌壁垒</li>
+                        <li>• 宣传渠道固化，过度依赖公域流量平台，对二次元私域社群的渗透不足，内容形式缺乏创新，宣发效果持续下滑</li>
+                        <li>• 跨界联动浮于表面，沉浸式体验、数字技术等前沿模式探索严重滞后，难以满足用户日益升级的体验需求</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="strategies" class="section-base bg-card">
+        <h2 class="title-level1">八、广州线下漫展产业发展对策建议</h2>
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
+                <div class="bg-primary text-white rounded-2xl p-6 text-center card-hover">
+                    <div class="text-2xl mb-3"><i class="fa fa-shield"></i></div>
+                    <h3 class="text-lg font-bold mb-2">监管体系强化<br>与风险防控</h3>
+                    <p class="text-white/80 text-caption">筑牢产业安全底线，规范行业发展秩序</p>
+                </div>
+                <div class="bg-primary text-white rounded-2xl p-6 text-center card-hover">
+                    <div class="text-2xl mb-3"><i class="fa fa-star"></i></div>
+                    <h3 class="text-lg font-bold mb-2">内容创新<br>与体验升级</h3>
+                    <p class="text-white/80 text-caption">激活产业内生动力，提升用户核心体验</p>
+                </div>
+                <div class="bg-primary text-white rounded-2xl p-6 text-center card-hover">
+                    <div class="text-2xl mb-3"><i class="fa fa-link"></i></div>
+                    <h3 class="text-lg font-bold mb-2">全链条<br>产业协同发展</h3>
+                    <p class="text-white/80 text-caption">延伸产业价值链条，构建产业生态闭环</p>
+                </div>
+                <div class="bg-primary text-white rounded-2xl p-6 text-center card-hover">
+                    <div class="text-2xl mb-3"><i class="fa fa-road"></i></div>
+                    <h3 class="text-lg font-bold mb-2">长线发展<br>与政策保障</h3>
+                    <p class="text-white/80 text-caption">完善行业标准体系，保障产业长效发展</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="academic-card">
+                    <h3 class="text-xl font-bold mb-6 text-primary">一、监管体系强化与风险防控</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">票务治理与嘉宾管理升级</h4>
+                            <p class="text-caption leading-body">引入区块链技术实现门票全流程溯源，采用实名购票与人脸识别入场结合的机制打击黄牛囤票；增设嘉宾背调机制，建立行业失信黑名单，严防不良从业者混入；建立漫展主办方资质审核制度，提高行业准入门槛，严厉打击虚假宣传，保障消费者合法权益。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">安防体系智能化改造</h4>
+                            <p class="text-caption leading-body">部署智能物联安防网络，针对周边偷盗问题推行智能防盗系统；优化场馆监控覆盖，建立快速应急响应机制；完善未成年人保护专项方案，设立未成年人专属服务区与应急通道；建立行业统一的安全标准体系，规范场馆安防建设，为参展人员提供安全的逛展环境。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card">
+                    <h3 class="text-xl font-bold mb-6 text-primary">二、内容创新与体验升级</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">空间规划与服务体系优化</h4>
+                            <p class="text-caption leading-body">开发故事线驱动的沉浸式观展模式，实施科学的空间布局，区分核心舞台区、IP展区、同人创作区、休憩服务区，优化场馆动线设计；设立二次元服务驿站，提供妆造急救、道具维修等专业服务；针对不同受众群体，打造差异化的体验场景，满足用户的个性化需求。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">创作者生态培育计划</h4>
+                            <p class="text-caption leading-body">启动本土同人创作者扶持计划，设立原创扶持基金；构建版权共享池，接入国家版权交易平台，为创作者提供版权登记、合规指导服务；开展IP方与创作者的季度对接会，推动官方对同人创作的规范化授权，为本土创作者提供展示与商业化通道；举办同人创作大赛，挖掘优秀的本土创作者，培育原创内容生态。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">漫展IP品牌化运营</h4>
+                            <p class="text-caption leading-body">深化漫展自有IP的角色运营与内容建设，打造AR打卡点、UGC创作大赛等多元内容；与国漫、本土游戏厂商深度合作，打造沉浸式剧情活动，结合广州本土文化特色，打造差异化的品牌定位；针对不同受众群体，打造差异化的内容板块，实现全受众覆盖，形成长期的品牌壁垒与用户粘性。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card">
+                    <h3 class="text-xl font-bold mb-6 text-primary">三、全链条产业协同发展</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">产业价值链延伸</h4>
+                            <p class="text-caption leading-body">拓展“漫展+”复合业态，与文旅部门合作开发二次元文化节，联动城市文旅资源打造二次元巡礼路线；与岭南非遗文化结合，打造特色赛事活动，实现二次元文化与本土文化的融合发展；参考秋叶原模式升级动漫星城等固定商业空间，完善线下谷店的业态规范，打造正版供应链体系，实现展会与城市商业深度融合。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">数字治理平台建设</h4>
+                            <p class="text-caption leading-body">搭建广州漫展产业大数据中心，整合票务、安防、消费等全维度数据，为主办方提供用户洞察工具；开发参展商信用评分模型，纳入广州市公共信用信息系统，实现行业动态监管；构建舆情预警系统，实时监测社群风险信号，实现智慧化治理；打造广州漫展专属服务APP，为用户提供一站式逛展服务，提升用户体验。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="academic-card">
+                    <h3 class="text-xl font-bold mb-6 text-primary">四、长线发展与政策保障</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">行业标准体系建设</h4>
+                            <p class="text-caption leading-body">制定大湾区漫展运营统一标准，明确展商准入的资质要求、版权审核标准、安全保障规范；建立漫展服务质量星级评价制度，规范展会申办流程，提高行业准入门槛；建立同人展、ONLY展等细分业态的专项运营规范，推动行业标准化、规范化发展，杜绝“赚快钱”的不良主办方扰乱市场。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">产业人才培育工程</h4>
+                            <p class="text-caption leading-body">联合广州本地高校设立本土IP创作赛事，提升广州本土IP持有量；开设会展数字内容设计、动漫创作等相关专业方向，培育复合型策展人才与创作人才；建立创作者孵化体系，为同人创作者提供创作指导、版权服务、商业化对接等全链条支持；依托广州高校资源，培育既懂二次元文化、又懂文艺美学与产业运营的复合型人才。</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-4">政策支持配套完善</h4>
+                            <p class="text-caption leading-body">争取文化产业发展专项资金倾斜，对漫展产业的技术应用、原创内容孵化给予补贴支持；将优质漫展纳入广州文旅消费券使用范围，推动漫展与文旅产业的深度融合；出台同人创作合规指引，明确创作边界，为同人创作提供政策保障；将漫展产业纳入广州文化产业发展规划，给予专项政策支持，推动广州漫展产业高质量发展。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第八部分：研究结论与创新成果 -->
+    <section id="conclusion" class="section-base bg-white">
+        <h2 class="title-level1">九、研究结论与创新成果</h2>
+        <div class="max-w-6xl mx-auto">
+            <div class="academic-card mb-10">
+                <h3 class="title-level3 text-primary">研究核心结论</h3>
+                <p class="body-text">
+                    本研究通过系统性调研、田野观察与深度访谈，结合文艺学美学理论、社会批判理论，对广州线下漫展产业进行了全维度的分析，发现广州线下漫展产业正处于规模高速扩张与质量发展滞后的转型阵痛期，其核心矛盾在于快速增长的青年审美需求、文化需求与不完善的产业治理体系之间的不匹配。
+                </p>
+                <p class="body-text">
+                    漫展不仅是一种商业会展形态，更是当代青年群体的审美实践场域、精神异托邦空间、亚文化传播核心阵地，其发展不仅关系到文化产业的经济增长，更关系到青年审美培育、身份建构与城市文化建设。广州漫展产业的高质量发展，无法通过单一维度的优化实现，必须通过监管革新、体验升级、生态重构、制度保障的四维驱动，构建政府、行业、创作者、受众多方协同的治理体系，才能实现从规模扩张向质量跃升的根本性转型，为全国二次元文化产业发展提供可复制的湾区实践样本。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="academic-card card-hover">
+                    <div class="text-secondary text-2xl mb-4"><i class="fa fa-book"></i></div>
+                    <h3 class="font-bold text-xl mb-4">理论运用创新</h3>
+                    <p class="text-caption leading-body">
+                        突破传统漫展研究单一的产业经济分析框架，引入文艺学美学核心理论、法兰克福学派社会批判理论，从受众审美心理、青年亚文化的维度切入，剖析漫展产业转型困境的底层逻辑，构建了“审美实践-精神影响-文化传播-产业发展”的全新分析范式，丰富了青年亚文化、文艺美学与文化产业研究的学术体系，贴合文艺学专业的研究方向与学术视野。
+                    </p>
+                </div>
+                <div class="academic-card card-hover">
+                    <div class="text-secondary text-2xl mb-4"><i class="fa fa-bar-chart"></i></div>
+                    <h3 class="font-bold text-xl mb-4">研究方法创新</h3>
+                    <p class="text-caption leading-body">
+                        将国内外产业对比分析与广州本土案例深度研究相结合，全面呈现广州漫展产业的独特性与普遍性；采用参与式观察法，以coser身份深度融入漫展场景，获得了大量一手的田野调查资料与深度访谈内容；通过网络爬虫技术采集平台数据，精准把握用户媒介行为与内容偏好；通过线上社群长期观察，精准把握了广州二次元社群的运行逻辑与传播规律，为对策建议提供了扎实的实证支撑。
+                    </p>
+                </div>
+            </div>
+
+            <div class="academic-card">
+                <h3 class="title-level3 text-primary">研究不足与未来展望</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">研究不足之处</h4>
+                        <p class="text-caption leading-body">
+                            受时间与资源限制，调研的深度与广度存在一定局限，案例选取未能覆盖所有小众漫展类型，对港澳地区漫展产业的联动研究存在不足；提出的对策建议在理论层面具备合理性，但其在复杂市场环境中的实操性与实施效果，仍有待后续实践验证与跟踪研究。
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl mb-4">未来研究展望</h4>
+                        <p class="text-caption leading-body">
+                            后续可开展长周期的跟踪调研，进一步完善研究样本的覆盖度，加入粤港澳大湾区漫展产业联动发展的研究；可针对对策建议开展试点研究，通过实践反馈优化策略体系；可进一步拓展研究维度，深入探究AIGC、元宇宙等新技术对漫展产业的影响，以及虚拟展会与线下展会的融合发展路径；可从文艺学专业视角，进一步深化二次元审美文化与青年审美教育的相关研究，挖掘漫展产业更深层的审美价值与文化价值。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 回到顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300">
+        <i class="fa fa-angle-up text-xl"></i>
+    </button>
+
+    <!-- JS脚本 -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            menuBtn.innerHTML = mobileMenu.classList.contains('hidden') 
+                ? '<i class="fa fa-bars"></i>' 
+                : '<i class="fa fa-times"></i>';
+        });
+
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+            } else {
+                navbar.classList.remove('shadow-md');
+            }
+        });
+
+        // 回到顶部按钮
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.remove('opacity-0', 'invisible');
+                backToTopBtn.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopBtn.classList.add('opacity-0', 'invisible');
+                backToTopBtn.classList.remove('opacity-100', 'visible');
+            }
+        });
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 平滑滚动锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                        menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                    }
+                }
+            });
+        });
+
+        // 区域分布Tab切换
+        const districtTabs = document.querySelectorAll('.district-tab');
+        const districtContents = document.querySelectorAll('.district-content');
+        districtTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 重置所有tab样式
+                districtTabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                // 激活当前tab
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+                // 隐藏所有内容
+                districtContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                // 显示对应内容
+                const targetDistrict = tab.getAttribute('data-district');
+                const targetContent = document.getElementById(`${targetDistrict}-content`);
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('active');
+            });
+        });
+
+        // 漫展分类Tab切换
+        const classTabs = document.querySelectorAll('.class-tab');
+        const classContents = document.querySelectorAll('.class-content');
+        classTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 重置所有tab样式
+                classTabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                // 激活当前tab
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+                // 隐藏所有内容
+                classContents.forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('active');
+                });
+                // 显示对应内容
+                const targetClass = tab.getAttribute('data-class');
+                const targetContent = document.getElementById(`${targetClass}-content`);
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('active');
+            });
+        });
+
+        // 核心术语分类筛选
+        const termTabs = document.querySelectorAll('.term-tab');
+        const termCards = document.querySelectorAll('.term-flip-card');
+        termTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 重置所有tab样式
+                termTabs.forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                // 激活当前tab
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+                // 筛选卡片
+                const targetType = tab.getAttribute('data-type');
+                termCards.forEach(card => {
+                    if (targetType === 'all') {
+                        card.classList.remove('hidden');
+                    } else {
+                        if (card.getAttribute('data-type') === targetType) {
+                            card.classList.remove('hidden');
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        });
+
+        // 理论手风琴交互
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const targetId = header.getAttribute('data-accordion');
+                const targetContent = document.getElementById(targetId);
+                const icon = header.querySelector('i');
+                // 切换激活状态
+                targetContent.classList.toggle('active');
+                // 旋转图标
+                if (targetContent.classList.contains('active')) {
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // 关键词词云渲染
+        window.addEventListener('DOMContentLoaded', () => {
+            // 词云数据
+            const wordCloudData = [
+                { text: '广州漫展', value: 70 },
+                { text: '同人创作', value: 60 },
+                { text: '审美实践', value: 50 },
+                { text: '谷子经济', value: 45 },
+                { text: '二次元', value: 40 },
+                { text: '接受美学', value: 40 },
+                { text: '青年亚文化', value: 55 },
+                { text: '受众心理', value: 45 },
+                { text: '产业发展', value: 50 },
+                { text: '受众心理', value: 35 },
+                { text: '文化产业', value: 30 },
+                { text: 'ONLY展', value: 35 },
+                { text: 'cosplay', value: 40 },
+                { text: '亚文化', value: 45 },
+                { text: '城市文化', value: 30 },
+                { text: '审美无功利性', value: 35 },
+            ];
+
+            // 词云配置
+            const wordCloudCtx = document.getElementById('wordCloudChart').getContext('2d');
+            new Chart(wordCloudCtx, {
+                type: 'wordCloud',
+                data: {
+                    labels: wordCloudData.map(item => item.text),
+                    datasets: [{
+                        label: '论文核心关键词',
+                        data: wordCloudData.map(item => item.value),
+                        color: function(context) {
+                            const index = context.dataIndex;
+                            const value = context.dataset.data[index];
+                            return value > 80 ? '#1E40AF' : value > 70 ? '#3B82F6' : '#60A5FA';
+                        },
+                        font: {
+                            family: 'SimHei',
+                            weight: 'bold'
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `关键词：${context.label}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
